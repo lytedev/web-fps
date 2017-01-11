@@ -1,0 +1,26 @@
+{
+  "name": "threejstest",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "webpack-dev-server --content-base dist/ --hot --inline",
+    "build": "webpack"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "coffee-loader": "^0.7.2",
+    "coffee-script": "^1.12.2",
+    "css-loader": "^0.26.1",
+    "html-webpack-plugin": "^2.26.0",
+    "postcss": "^5.2.9",
+    "poststylus": "^0.2.3",
+    "pug": "^2.0.0-beta6",
+    "pug-loader": "^2.3.0",
+    "style-loader": "^0.13.1",
+    "stylus": "^0.54.5",
+    "stylus-loader": "^2.4.0",
+    "three": "^0.83.0",
+    "webpack": "^1.14.0",
+    "webpack-dev-server": "^1.16.2"
+  }
+}
