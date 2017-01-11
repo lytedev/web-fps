@@ -16,10 +16,12 @@
     "poststylus": "^0.2.3",
     "pug": "^2.0.0-beta6",
     "pug-loader": "^2.3.0",
+    "stats.js": "^0.17.0",
     "style-loader": "^0.13.1",
     "stylus": "^0.54.5",
     "stylus-loader": "^2.4.0",
     "three": "^0.83.0",
+    "three-window-resize": "^1.0.4",
     "webpack": "^1.14.0",
     "webpack-dev-server": "^1.16.2"
   }

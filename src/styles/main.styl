@@ -1,4 +1,47 @@
+@import url('https://fonts.googleapis.com/css?family=Lato')
+
+$fontstack = "Lato", "Helvetica Neue", "Calibri Light", Roboto, sans-serif
+
+html
+  font-size 62.5%
+
 body, html
   margin 0
   padding 0
   overflow hidden
+
+body
+  font 1.6rem/2rem $fontstack
+
+  #stats
+    display none
+
+  #debug-messages
+    display none
+
+  &.show-debug-info
+    #stats
+      display block
+
+    #debug-messages
+      display block
+
+#app
+  color #fff
+
+  canvas
+    position fixed
+    top 0
+    bottom 0
+    left 0
+    right 0
+    z-index -5
+
+  #debug-messages
+    z-index 5
+    position absolute
+    top 5rem
+
+    .message
+      padding 1rem
+      background #111
