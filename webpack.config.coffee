@@ -15,6 +15,7 @@ module.exports =
       { test: /\.pug$/, loader: "pug" }
       { test: /\.styl$/, loader: "style!css!stylus" }
       { test: /\.coffee$/, loader: "coffee" }
+      { test: /\.jpe?g$|\.gif$|\.png$|\.svg$|\.woff$|\.ttf$|\.wav$|\.mp3$/, loader: "file" }
     ]
   plugins: [ new htmlPlugin(htmlPluginConfig) ]
   stylus:
