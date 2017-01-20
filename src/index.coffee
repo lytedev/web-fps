@@ -185,6 +185,15 @@ class Game
 
     # baby skybox
 
+    geometry = new Three.SphereGeometry 0.5, 32, 32
+    material = new Three.MeshLambertMaterial()
+    ball = new Three.Mesh geometry, material
+    ball.castShadow = true
+    ball.position.set -1.5, 0, 0
+    ball.name = "spinning_ball"
+    scene.add ball
+
+
     urls = []
     for piece in [ "front", "back", "left", "right", "top", "bottom" ]
       urls.push require "./../static/img/skybox_space_#{piece}.png"
@@ -193,11 +202,7 @@ class Game
     textureCube = skyboxCubeTextureLoader.load urls, (texture) ->
       shader = Three.ShaderLib["cube"]
       uniforms = Three.UniformsUtils.clone
-      # uniforms['tCube'].texture = texture
-      # skyboxMaterial = new Three.ShaderMaterial
-      #   fragmentShader: shader.fragmentShader
-      #   vertexShader: shader.vertexShader
-      #   uniforms: uniforms
+      uniforms['tCube'].texture = texture
 
       skyboxMaterial = new Three.ShaderMaterial
         fragmentShader: shader.fragmentShader
@@ -213,23 +218,15 @@ class Game
       cube.name = "tiny_skybox"
       scene.add cube
 
-    geometry = new Three.SphereGeometry 0.5, 32, 32
-    material = new Three.MeshLambertMaterial()
-    ball = new Three.Mesh geometry, material
-    ball.castShadow = true
-    ball.position.set -1.5, 0, 0
-    ball.name = "spinning_ball"
-    scene.add ball
-
-    geometry = new Three.BoxGeometry 5000, 5000, 5000
-    urls = []
-    for piece in [ "front", "back", "left", "right", "top", "bottom" ]
-      urls.push "./static/img/skybox_space_#{piece}.png"
-    # textureCube = Three.ImageUtils.loadTextureCube urls
-    skybox = new Three.Mesh geometry, material
-    skybox.name = "skybox"
-    skybox.scale.set -1, 1, 1
-    # scene.add skybox
+      geometry = new Three.BoxGeometry 5000, 5000, 5000
+      urls = []
+      for piece in [ "front", "back", "left", "right", "top", "bottom" ]
+        urls.push "./static/img/skybox_space_#{piece}.png"
+      # textureCube = Three.ImageUtils.loadTextureCube urls
+      skybox = new Three.Mesh geometry, skyboxMaterial
+      skybox.name = "skybox"
+      skybox.scale.set -1, 1, 1
+      # scene.add skybox
 
     geometry = new Three.BoxGeometry 100, 100, 0.1
     material = new Three.MeshPhongMaterial()
