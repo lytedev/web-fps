@@ -3,9 +3,10 @@ InputNames =
   BACKWARD: "backward"
   STRAFE_LEFT: "strafeLeft"
   STRAFE_RIGHT: "strafeRight"
+  MOUSE_LOOK: "mouseLook"
 
 class InputManager
-  constructor: ->
+  constructor: (@game) ->
     # map keys to input names
     @keyMap =
       w: InputNames.FORWARD
@@ -14,28 +15,28 @@ class InputManager
       d: InputNames.STRAFE_RIGHT
 
     @keyInputs = {}
-    for it of InputNames
+    for it in InputNames
       @keyInputs[it] = false
 
     @otherInputs =
-      mouseLook:
+      "#{InputNames.MOUSE_LOOK}":
         zrot: 0
         xrot: 0
 
     @mouseSensitivity = 0.0020
     @hasControlFocus = false
 
-  mouseLockHandler: (ev) ->
+  mouseLockHandler: (ev) =>
     body = document.body
     if document.pointerLockElement == body or document.mozPointerLockElement == body or document.webkitPointerLockElement == body
       @hasControlFocus = true
     else
       @hasControlFocus = false
 
-  mouseLockError: (ev) ->
+  mouseLockError: (ev) =>
     null
 
-  requestMouseLock: (ev) ->
+  requestMouseLock: (ev) =>
     body = document.body
     if not @hasControlFocus
       body.requestPointerLock = body.requestPointerLock || body.mozRequestPointerLock || body.webkitRequestPointerLock
@@ -47,14 +48,14 @@ class InputManager
 
     if browserHasPointerLock
       # handle gain or loss of mouse capture
-      document.addEventListener 'pointerlockchange', @mouseLockError, false
-      document.addEventListener 'mozpointerlockchange', @mouseLockError, false
-      document.addEventListener 'webkitpointerlockchange', @mouseLockError, false
+      document.addEventListener 'pointerlockchange', @mouseLockHandler, false
+      document.addEventListener 'mozpointerlockchange', @mouseLockHandler, false
+      document.addEventListener 'webkitpointerlockchange', @mouseLockHandler, false
 
       # handle mouse capture errors
-      document.addEventListener 'pointerlockerror', @mouseLockHandler, false
-      document.addEventListener 'mozpointerlockerror', @mouseLockHandler, false
-      document.addEventListener 'webkitpointerlockerror', @mouseLockHandler, false
+      document.addEventListener 'pointerlockerror', @mouseLockError, false
+      document.addEventListener 'mozpointerlockerror', @mouseLockError, false
+      document.addEventListener 'webkitpointerlockerror', @mouseLockError, false
 
       # try to capture mouse when the user clicks
       document.addEventListener 'mousedown', @requestMouseLock, false
@@ -66,17 +67,20 @@ class InputManager
     document.addEventListener 'keydown', @keyDown, false
     document.addEventListener 'keyup', @keyUp, false
 
-  mouseLook: (ev) ->
+  mouseLook: (ev) =>
     if @hasControlFocus
       xmov = (ev.movementX || ev.mozMovementX || ev.webkitMovementX || 0)
       ymov = (ev.movementY || ev.mozMovementY || ev.webkitMovementY || 0)
-      @otherInputs.mouseLook.zrot = -xmov * @mouseSensitivity
-      @otherInputs.mouseLook.xrot = -ymov * @mouseSensitivity
+      zrot = -xmov * @mouseSensitivity
+      xrot = -ymov * @mouseSensitivity
 
-  keyDown: (ev) ->
+      @game.renderer.camera.rotation.x += xrot
+      @game.renderer.camera.rotation.z += zrot
+
+  keyDown: (ev) =>
     if ev.key of @keyMap then @keyInputs[@keyMap[ev.key]] = true
 
-  keyUp: (ev) ->
+  keyUp: (ev) =>
     if ev.key of @keyMap then @keyInputs[@keyMap[ev.key]] = false
 
   getInputState: (inputName) ->
@@ -85,4 +89,16 @@ class InputManager
     if @otherInputs[inputName] then return @otherInputs[inputName]
     return undefined
 
-module.exports
+  getInputMap: (returnNames, inputNames) ->
+    r = {}
+    i = 1
+    for j of returnNames
+      r[j] = @getInputState inputNames[i - 1]
+      i++
+    for k in [i..inputNames.length]
+      r["input$#{k}"] = @getInputState inputNames[k]
+    return r
+
+module.exports =
+  InputManager: InputManager
+  InputNames: InputNames

@@ -5,71 +5,74 @@ Stats = require 'stats.js'
 
 DEFAULT_FOV=60
 
-PI = Math.PI
-TAU = PI * 2
-PI2 = PI / 2
-PI4 = PI / 4
-
 # NOTE: Maybe move to game?
 rendererOptions =
   antialias: true
 
 class GameRenderer
-  constructor: ->
+  constructor: (@game, options) ->
+    # TODO: merge options
+    @stats = new Stats()
+
+    @camera = new THREE.PerspectiveCamera(DEFAULT_FOV, window.innerWidth / window.innerHeight, 0.1, 100000)
+
+    @currentScene = 'default'
+    @scenes = {}
+    @loadScene @currentScene
+
     @renderer = new THREE.WebGLRenderer rendererOptions
     @renderer.shadowMap.type = THREE.PCFSoftShadowMap
     @renderer.shadowMap.enabled = true
-    @stats = new Stats()
-
-    @camera = new THREE.PerspectiveCamera(
-      DEFAULT_FOV,
-      window.innerWidth / window.innerHeight,
-      0.1, 100000)
-
-    @currentScene = 'default'
-    @scenes =
-      "#{@currentScene}": new THREE.Scene()
 
     @renderer.setSize window.innerWidth, window.innerHeight
     @autoWindowResizer = new ThreeWindowResize @renderer, @camera
 
     @addDomElements()
 
-    # forces the render method to use our class instance's scope
-    @render = this.render.bind this
+    @camera.position.y = 2
+    @camera.position.z = 3
+    @camera.position.x = 5
+    @camera.up = new THREE.Vector3 0, 0, 1
+    @camera.rotation.order = 'ZYX'
+    @camera.lookAt new THREE.Vector3 0, -1.5, 2.1
+
+  loadScene: (sceneName, sceneFile) ->
+    if not sceneFile? then sceneFile = sceneName
+    scene = require("../scenes/" + sceneFile + ".coffee")(@game)
+    scene.init()
+    @scenes[sceneName] = scene
 
   addDomElements: ->
     @stats.dom.id = "stats"
-    document.getElementById('app').appendChild @renderer.domElement
-    document.getElementById('app').appendChild @stats.dom
+
+    app = document.getElementById 'app'
+
+    app.appendChild @renderer.domElement
+    app.appendChild @stats.dom
 
     contextmenu = (ev) -> ev.preventDefault()
 
     @renderer.domElement.addEventListener 'contextmenu', contextmenu, false
 
-  start: ->
-    requestAnimationFrame @render
+  getCurrentScene: ->
+    @scenes[@currentScene]
 
   renderCurrentScene: ->
     # render our scene
-    this.renderer.render this.scenes[this.currentScene], this.camera
+    @renderer.render @scenes[@currentScene], @camera
 
-  render: (elapsed) ->
+  update: (dt) ->
     # start stats
-    this.stats.begin()
-
-    # request next frame
-    requestAnimationFrame this.render
-
-    # calculate delta time
-    dt = (elapsed - this.lastElapsed) * 0.001
-    this.lastElapsed = elapsed
+    @stats.begin()
 
     # TODO: draw an indicator of mouse captured or not
 
-    @update dt
+    for name, scene of @scenes
+      scene.update dt
+
     @renderCurrentScene()
 
     # end stats
-    this.stats.end()
+    @stats.end()
 
+module.exports = GameRenderer
