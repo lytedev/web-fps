@@ -23,7 +23,7 @@ class InputManager
         zrot: 0
         xrot: 0
 
-    @mouseSensitivity = 0.0020
+    @mouseSensitivity = 0.0010
     @hasControlFocus = false
 
   mouseLockHandler: (ev) =>

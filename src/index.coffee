@@ -5,4 +5,4 @@ game = require "./engine/game.coffee"
 # game.systems
 # TODO: give access to all components?
 
-game.start()
+game.start 'default'

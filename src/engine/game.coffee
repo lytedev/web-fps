@@ -7,8 +7,8 @@ class Game
 
     # initialize game systems
     @player = require('./player.coffee')(this)
-    @renderer = new GameRenderer this
     @input = new Input.InputManager this
+    @renderer = new GameRenderer this
 
     # force update to be called in the game's scope
     @update = @update.bind this
@@ -27,6 +27,7 @@ class Game
   start: ->
     # initializations
     @input.setup()
+    @renderer.start()
 
     # request the first frame
     requestAnimationFrame @update

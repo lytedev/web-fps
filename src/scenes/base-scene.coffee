@@ -9,6 +9,7 @@ class GameScene extends Scene
 
     @update = (dt) ->
       null
+
     @init = ->
       null
 

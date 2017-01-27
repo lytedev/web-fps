@@ -3,7 +3,7 @@ ThreeWindowResize = require 'three-window-resize'
 
 Stats = require 'stats.js'
 
-DEFAULT_FOV=60
+DEFAULT_FOV=70
 
 # NOTE: Maybe move to game?
 rendererOptions =
@@ -16,9 +16,7 @@ class GameRenderer
 
     @camera = new THREE.PerspectiveCamera(DEFAULT_FOV, window.innerWidth / window.innerHeight, 0.1, 100000)
 
-    @currentScene = 'default'
     @scenes = {}
-    @loadScene @currentScene
 
     @renderer = new THREE.WebGLRenderer rendererOptions
     @renderer.shadowMap.type = THREE.PCFSoftShadowMap
@@ -35,6 +33,10 @@ class GameRenderer
     @camera.up = new THREE.Vector3 0, 0, 1
     @camera.rotation.order = 'ZYX'
     @camera.lookAt new THREE.Vector3 0, -1.5, 2.1
+
+  start: (sceneName = 'default') ->
+    @currentScene = sceneName
+    @loadScene @currentScene
 
   loadScene: (sceneName, sceneFile) ->
     if not sceneFile? then sceneFile = sceneName

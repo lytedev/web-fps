@@ -1,8 +1,8 @@
 THREE = require 'three'
 GameScene = require './base-scene.coffee'
 
-module.exports = (@game) ->
-  scene = new GameScene @game
+module.exports = (game) ->
+  scene = new GameScene game
 
   scene.update = (dt) ->
     # update scene objects
@@ -17,9 +17,10 @@ module.exports = (@game) ->
     game.player.handleInput dt
 
   scene.init = ->
-    @add game.player
+    @add @game.player
+    @game.renderer.camera.position.z += 0
 
-    ambientLight = new THREE.AmbientLight 0xffffff, 0.025
+    ambientLight = new THREE.AmbientLight 0xffffff, 0.25
     @add ambientLight
 
     axes = new THREE.AxisHelper 2
@@ -57,19 +58,38 @@ module.exports = (@game) ->
       directionalLight.name = "default_scene_directional_light"
       directionalLight.position.set 10, 10, 20
       directionalLight.caseShadow = true
-      @add directionalLight
+      #@add directionalLight
 
       directionalLight.shadow.camera.right = 5
       directionalLight.shadow.camera.left = -5
       directionalLight.shadow.camera.top = 5
       directionalLight.shadow.camera.bottom = -5
 
-    geometry = new THREE.BoxGeometry 1, 1, 1
-    material = new THREE.MeshLambertMaterial()
-    cube = new THREE.Mesh geometry, material
-    cube.castShadow = true
-    cube.name = "spinning_cube"
-    @add cube
+    do => # spinning metal cube
+      textures = {}
+      for t in ["", "_normal", "_bump"]
+        textureLoader = new THREE.TextureLoader()
+        if t == "" then key = "map" else key = t.substring(1)
+        texture = textureLoader.load require "static/img/alloy_plate#{t}.png"
+        texture.wrapS = texture.wrapT = THREE.RepeatWrapping
+        texture.repeat.set 3, 3
+        textures[key] = texture
+
+      material = new THREE.MeshPhongMaterial
+        map: textures.map
+        normalMap: textures.normal
+        bumpMap: textures.bump
+        color: 0xffffff
+        specular: 0xffffff
+        shininess: 0.5
+        combine: THREE.MixOperation
+        reflectivity: 0.01
+
+      geometry = new THREE.BoxGeometry 1, 1, 1
+      cube = new THREE.Mesh geometry, material
+      cube.castShadow = true
+      cube.name = "spinning_cube"
+      @add cube
 
     geometry = new THREE.SphereGeometry 0.5, 32, 32
     material = new THREE.MeshLambertMaterial()
@@ -79,12 +99,32 @@ module.exports = (@game) ->
     ball.name = "spinning_ball"
     @add ball
 
-    geometry = new THREE.BoxGeometry 100, 100, 0.1
-    material = new THREE.MeshPhongMaterial()
-    plane = new THREE.Mesh geometry, material
-    plane.position.z = -1
-    plane.receiveShadow = true
-    @add plane
+    do => # floor
+      textureLoader = new THREE.TextureLoader()
+      geometry = new THREE.BoxGeometry 100, 100, 100000
+      materials = []
+      for i in [1..6]
+        materials.push new THREE.MeshLambertMaterial
+          color: "#222222"
+
+      textures = {}
+      for t in ["", "_normal", "_bump"]
+        if t == "" then key = "map" else key = t.substring(1)
+        texture = textureLoader.load require "static/img/alloy_plate#{t}.png"
+        texture.wrapS = texture.wrapT = THREE.RepeatWrapping
+        texture.repeat.set 150, 150
+        textures[key] = texture
+
+      materials[4] = new THREE.MeshPhongMaterial
+        map: textures.map
+        normalMap: textures.normal
+        bumpMap: textures.bump
+
+      material = new THREE.MultiMaterial materials
+      floor = new THREE.Mesh geometry, material
+      floor.position.z = -1 - 50000
+      floor.receiveShadow = true
+      @add floor
 
     do => # skyboxes
       # load texture map
