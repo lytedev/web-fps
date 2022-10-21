@@ -23,7 +23,7 @@
     "style-loader": "^0.13.1",
     "stylus": "^0.54.5",
     "stylus-loader": "^2.4.0",
-    "three": "^0.83.0",
+    "three": "^0.137.0",
     "three-window-resize": "^1.0.4",
     "url-loader": "^0.5.7",
     "webpack": "^1.14.0",

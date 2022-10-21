@@ -2840,9 +2840,9 @@ three-window-resize@^1.0.4:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/three-window-resize/-/three-window-resize-1.0.4.tgz#d636a65d22f587c87c3d3b6129d9b5d20b0d7d09"
 
-three@^0.83.0:
-  version "0.83.0"
-  resolved "https://registry.yarnpkg.com/three/-/three-0.83.0.tgz#3b7f94790af3e021dac1f44a2617569ca2032b0b"
+three@^0.137.0:
+  version "0.137.0"
+  resolved "https://registry.yarnpkg.com/three/-/three-0.137.0.tgz#0ebd6ba66637a332c31f234bcdd35aeec071a6e3"
 
 timers-browserify@^2.0.2:
   version "2.0.2"
